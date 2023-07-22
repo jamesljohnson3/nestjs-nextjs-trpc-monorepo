@@ -1,19 +1,42 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { AppService } from './app.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Headers,
+  UnauthorizedException,
+} from '@nestjs/common';
 
-@Controller('actions') // Specify the base route for this controller
+@Controller('actions')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private readonly allowedUUID = 'your-allowed-uuid'; // Replace with your authorized UUID
 
   @Get() // Handles GET requests to /actions
-  getAction() {
-    // Handle the GET action here
-    return { message: 'This is a GET action' };
+  getAction(@Headers('authorization') authorizationHeader: string) {
+    const authorizedUUID = authorizationHeader?.split(' ')[1]; // Extract the UUID from the Authorization header
+
+    // Check if the provided UUID matches the allowed UUID
+    if (!authorizedUUID || authorizedUUID !== this.allowedUUID) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    // If the UUID is valid, respond with "Hello, World!"
+    return { message: 'Hello, World!' };
   }
 
   @Post() // Handles POST requests to /actions
-  postAction(@Body() data: any) {
-    // Handle the POST action here with the incoming request data
-    return { message: 'This is a POST action', data };
+  postAction(
+    @Headers('authorization') authorizationHeader: string,
+    @Body() body: any,
+  ) {
+    const authorizedUUID = authorizationHeader?.split(' ')[1]; // Extract the UUID from the Authorization header
+
+    // Check if the provided UUID matches the allowed UUID
+    if (!authorizedUUID || authorizedUUID !== this.allowedUUID) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    // If the UUID is valid, respond with "Hello, World!"
+    return { message: 'Hello, World!' };
   }
 }
