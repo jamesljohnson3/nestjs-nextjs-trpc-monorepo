@@ -9,7 +9,7 @@ import {
 
 @Controller('actions')
 export class AppController {
-  private readonly allowedUUID = 'your-allowed-uuid'; // Replace with your authorized UUID
+  private readonly allowedUUID = '22-22-22'; // Replace with your authorized UUID
 
   @Get() // Handles GET requests to /actions
   getAction(@Headers('authorization') authorizationHeader: string) {
