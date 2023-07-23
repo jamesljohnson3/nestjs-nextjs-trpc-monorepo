@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://unlimit-potential-lho3ne.eu-west-1.xata.sh/db/now",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
