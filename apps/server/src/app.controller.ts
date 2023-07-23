@@ -20,7 +20,7 @@ export class AppController {
 
     try {
       // Assuming you want to filter the items table using the provided filter
-      const items: Items[] | null = await this.xataClient.getAll<Items>(table_name, filter);
+      const items: any[] | null = await this.xataClient.getAll<Items>(table_name, filter);
 
       // Check if 'items' is null or undefined before proceeding
       if (!items) {
