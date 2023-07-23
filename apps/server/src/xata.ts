@@ -47,6 +47,9 @@ const defaultOptions = {
 };
 
 export class XataClient extends DatabaseClient<DatabaseSchema> {
+  getAll<T>(table_name: any, filter: any) {
+    throw new Error('Method not implemented.');
+  }
   constructor(options?: BaseClientOptions) {
     super({ ...defaultOptions, ...options }, tables);
   }

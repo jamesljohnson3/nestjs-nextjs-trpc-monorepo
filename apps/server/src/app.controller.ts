@@ -1,42 +1,45 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Headers,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { XataClient, Items } from './xata'; // Replace with the actual path to your XataClient file
 
 @Controller('actions')
 export class AppController {
-  private readonly allowedUUID = '22-22-22'; // Replace with your authorized UUID
+  private readonly xataClient: XataClient;
 
-  @Get() // Handles GET requests to /actions
-  getAction(@Headers('authorization') authorizationHeader: string) {
-    const authorizedUUID = authorizationHeader?.split(' ')[1]; // Extract the UUID from the Authorization header
-
-    // Check if the provided UUID matches the allowed UUID
-    if (!authorizedUUID || authorizedUUID !== this.allowedUUID) {
-      throw new UnauthorizedException('Unauthorized');
-    }
-
-    // If the UUID is valid, respond with "Hello, World!"
-    return { message: 'Hello, World!' };
+  constructor() {
+    this.xataClient = new XataClient();
   }
 
-  @Post() // Handles POST requests to /actions
-  postAction(
-    @Headers('authorization') authorizationHeader: string,
-    @Body() body: any,
-  ) {
-    const authorizedUUID = authorizationHeader?.split(' ')[1]; // Extract the UUID from the Authorization header
+  @Post('get-allowed-uuid')
+  async getAllowedUUID(@Body() requestBody: any) {
+    const { db_branch_name, table_name, filter } = requestBody;
 
-    // Check if the provided UUID matches the allowed UUID
-    if (!authorizedUUID || authorizedUUID !== this.allowedUUID) {
-      throw new UnauthorizedException('Unauthorized');
+    // Make sure you have the necessary properties in the requestBody
+    if (!db_branch_name || !table_name || !filter) {
+      throw new HttpException('Invalid request body', HttpStatus.BAD_REQUEST);
     }
 
-    // If the UUID is valid, respond with "Hello, World!"
-    return { message: 'Hello, World!' };
+    try {
+      // Assuming you want to filter the items table using the provided filter
+      const items: Items[] | null = await this.xataClient.getAll<Items>(table_name, filter);
+
+      // Check if 'items' is null or undefined before proceeding
+      if (!items) {
+        throw new HttpException('No items found', HttpStatus.NOT_FOUND);
+      }
+
+      // Assuming you have a column named 'api_key' in the items table to store the allowed UUID
+      const allowedUUIDs: string[] = items.map((item) => item.api_key);
+
+      // If the 'allowedUUIDs' array is empty, throw an error
+      if (allowedUUIDs.length === 0) {
+        throw new HttpException('Allowed UUID not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Respond with the array of allowed UUIDs
+      return { allowedUUIDs };
+    } catch (error) {
+      // Handle errors from Xata API (e.g., network issues, invalid response, etc.)
+      throw new HttpException('Error fetching allowed UUIDs from Xata', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
