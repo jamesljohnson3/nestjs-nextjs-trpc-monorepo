@@ -47,7 +47,7 @@ const defaultOptions = {
 };
 
 export class XataClient extends DatabaseClient<DatabaseSchema> {
-  getAll<T>(table_name: any, filter: any) {
+  getAll<T>(table_name: any, filter: any): (import("@xata.io/client").Identifiable & { isCompleted: boolean; } & { createdAt: Date; } & { userId: string; } & { title: string; } & { api_key: string; } & { domain_id: string; })[] | PromiseLike<...> | null {
     throw new Error('Method not implemented.');
   }
   constructor(options?: BaseClientOptions) {
