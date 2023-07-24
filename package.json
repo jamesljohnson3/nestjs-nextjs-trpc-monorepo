@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nestjs/axios": "^3.0.0",
     "@xata.io/client": "^0.24.3"
   }
 }
