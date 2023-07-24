@@ -38,8 +38,8 @@ export class AppController {
     try {
       // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
       const [webhookResponse1, webhookResponse2] = await Promise.all([
-        this.httpService.get(this.webhookUrl).toPromise(),
-        this.httpService.get(this.webhookUrl).toPromise(),
+        this.httpService.post(this.webhookUrl, { key: 'content' }).toPromise(),
+        this.httpService.post(this.webhookUrl, { key: 'content2' }).toPromise(),
       ]);
 
       if (webhookResponse1 && webhookResponse2) {
@@ -79,8 +79,8 @@ export class AppController {
     try {
       // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
       const [webhookResponse1, webhookResponse2] = await Promise.all([
-        this.httpService.get(this.webhookUrl).toPromise(),
-        this.httpService.get(this.webhookUrl).toPromise(),
+        this.httpService.post(this.webhookUrl, { key: 'content' }).toPromise(),
+        this.httpService.post(this.webhookUrl, { key: 'content2' }).toPromise(),
       ]);
 
       if (webhookResponse1 && webhookResponse2) {
