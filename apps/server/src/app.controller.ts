@@ -14,6 +14,8 @@ export class AppController {
   private readonly allowedUUID = '22-22-22'; // Replace with your authorized UUID
   private webhookUrl =
     'https://snap-jj3media-icloud-com.eu-1.celonis.cloud/ems-automation/public/api/root/a0e537b1-b88f-434c-a659-0cadea64b085/hook/f03auw3rub1gl5djqehmslc4rpm8j33e'; // Replace this with your actual webhook URL
+  private webhookUrl2 =
+    'https://snap-jj3media-icloud-com.eu-1.celonis.cloud/ems-automation/public/api/root/a0e537b1-b88f-434c-a659-0cadea64b085/hook/acgonuudtu441k97whj3xp8ykm9pme2s'; // Replace this with your second webhook URL
 
   constructor(private httpService: HttpService) {}
 
@@ -44,7 +46,9 @@ export class AppController {
       // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
       const [webhookResponse1, webhookResponse2] = await Promise.all([
         this.httpService.post(this.webhookUrl, { key: 'content' }).toPromise(),
-        this.httpService.post(this.webhookUrl, { key: 'content2' }).toPromise(),
+        this.httpService
+          .post(this.webhookUrl2, { key: 'content2' })
+          .toPromise(),
       ]);
 
       if (webhookResponse1 && webhookResponse2) {
@@ -89,7 +93,9 @@ export class AppController {
       // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
       const [webhookResponse1, webhookResponse2] = await Promise.all([
         this.httpService.post(this.webhookUrl, { key: 'content' }).toPromise(),
-        this.httpService.post(this.webhookUrl, { key: 'content2' }).toPromise(),
+        this.httpService
+          .post(this.webhookUrl2, { key: 'content2' })
+          .toPromise(),
       ]);
 
       if (webhookResponse1 && webhookResponse2) {
