@@ -36,15 +36,21 @@ export class AppController {
     const response: ApiResponse = { message: 'Hello, World!', isValid: true };
 
     try {
-      // Fetch data from the webhook endpoint
-      const webhookResponse: AxiosResponse<any, any> | undefined =
-        await this.httpService.get(this.webhookUrl).toPromise();
+      // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
+      const [webhookResponse1, webhookResponse2] = await Promise.all([
+        this.httpService.get(this.webhookUrl).toPromise(),
+        this.httpService.get(this.webhookUrl).toPromise(),
+      ]);
 
-      if (webhookResponse) {
-        console.log('Webhook response:', webhookResponse.data);
+      if (webhookResponse1 && webhookResponse2) {
+        console.log('Webhook response 1:', webhookResponse1.data);
+        console.log('Webhook response 2:', webhookResponse2.data);
 
         // Populate the webhookResponseData array with the data received from the webhook endpoint
-        response.webhookResponseData = webhookResponse.data;
+        response.webhookResponseData = [
+          webhookResponse1.data,
+          webhookResponse2.data,
+        ];
       } else {
         console.error('Webhook request failed');
         response.webhookResponseData = []; // Set webhookResponseData to an empty array in case of an error
@@ -71,15 +77,21 @@ export class AppController {
     const response: ApiResponse = { message: 'Hello, World!', isValid: true };
 
     try {
-      // Fetch data from the webhook endpoint
-      const webhookResponse: AxiosResponse<any, any> | undefined =
-        await this.httpService.get(this.webhookUrl).toPromise();
+      // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
+      const [webhookResponse1, webhookResponse2] = await Promise.all([
+        this.httpService.get(this.webhookUrl).toPromise(),
+        this.httpService.get(this.webhookUrl).toPromise(),
+      ]);
 
-      if (webhookResponse) {
-        console.log('Webhook response:', webhookResponse.data);
+      if (webhookResponse1 && webhookResponse2) {
+        console.log('Webhook response 1:', webhookResponse1.data);
+        console.log('Webhook response 2:', webhookResponse2.data);
 
         // Populate the webhookResponseData array with the data received from the webhook endpoint
-        response.webhookResponseData = webhookResponse.data;
+        response.webhookResponseData = [
+          webhookResponse1.data,
+          webhookResponse2.data,
+        ];
       } else {
         console.error('Webhook request failed');
         response.webhookResponseData = []; // Set webhookResponseData to an empty array in case of an error
