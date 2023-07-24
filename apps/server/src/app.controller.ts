@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Headers, Query } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
 
@@ -8,7 +8,11 @@ interface ApiResponse {
   isValid: boolean;
   webhookResponseData?: any[]; // Change this to the desired type
 }
-
+interface PostData {
+  field1: string;
+  field2: string;
+  // Add more fields as needed
+}
 @Controller('actions')
 export class AppController {
   private readonly allowedUUID = '22-22-22'; // Replace with your authorized UUID
@@ -31,6 +35,9 @@ export class AppController {
   @Get() // Handles GET requests to /actions
   async getAction(
     @Headers('authorization') authorizationHeader: string,
+    @Query('uuid') uuid: string,
+    @Query('field1') field1: string,
+    @Query('field2') field2: string,
   ): Promise<ApiResponse> {
     const authorizedUUID = authorizationHeader?.split(' ')[1];
 
@@ -43,6 +50,9 @@ export class AppController {
       isValid: true,
       key: '123456789',
     };
+    console.log('UUID:', uuid);
+    console.log('Field 1:', field1);
+    console.log('Field 2:', field2);
 
     try {
       // Fetch data from the webhook endpoints using Promise.all to handle multiple requests simultaneously
@@ -85,13 +95,14 @@ export class AppController {
   @Post() // Handles POST requests to /actions
   async postAction(
     @Headers('authorization') authorizationHeader: string,
-    @Body() body: any,
+    @Body() body: PostData, // Specify the type of the 'body' parameter
   ): Promise<ApiResponse> {
     const authorizedUUID = authorizationHeader?.split(' ')[1];
 
     if (!authorizedUUID || !this.isValidUUID(authorizedUUID)) {
       return { message: 'Unauthorized', isValid: false, key: 'null' };
     }
+    const { field1, field2 /* Add more fields as needed */ } = body;
 
     const response: ApiResponse = {
       message: 'Hello, World!',
@@ -104,13 +115,25 @@ export class AppController {
       const [webhookResponse1, webhookResponse2, webhookResponse3] =
         await Promise.all([
           this.httpService
-            .post(this.webhookUrl, { key: 'content' })
+            .post(this.webhookUrl, {
+              key: 'content',
+              field1,
+              field2 /* Add more fields as needed */,
+            })
             .toPromise(),
           this.httpService
-            .post(this.webhookUrl2, { key: 'content' })
+            .post(this.webhookUrl2, {
+              key: 'content',
+              field1,
+              field2 /* Add more fields as needed */,
+            })
             .toPromise(),
           this.httpService
-            .post(this.webhookUrl3, { key: 'content' })
+            .post(this.webhookUrl3, {
+              key: 'content',
+              field1,
+              field2 /* Add more fields as needed */,
+            })
             .toPromise(),
         ]);
 
