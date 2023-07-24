@@ -124,7 +124,6 @@ export class AppController {
           webhookResponse1.data,
           webhookResponse2.data,
           webhookResponse3.data,
-
         ];
       } else {
         console.error('Webhook request failed');
