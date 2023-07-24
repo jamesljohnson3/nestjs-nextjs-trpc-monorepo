@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, Headers } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
+import { HttpService } from '@nestjs/axios';
 
 interface ApiResponse {
   message: string;
   isValid: boolean;
-  webhookResponseData?: any;
+  webhookResponseData?: any[]; // Change this to the desired type
 }
 
 @Controller('actions')
@@ -27,24 +27,31 @@ export class AppController {
   async getAction(
     @Headers('authorization') authorizationHeader: string,
   ): Promise<ApiResponse> {
-    const authorizedUUID = authorizationHeader?.split(' ')[1]; // Extract the UUID from the Authorization header
+    const authorizedUUID = authorizationHeader?.split(' ')[1];
 
-    // Check if the provided UUID matches the allowed UUID
     if (!authorizedUUID || !this.isValidUUID(authorizedUUID)) {
       return { message: 'Unauthorized', isValid: false };
     }
 
-    // If the UUID is valid, respond with a JSON object containing the message and isValid value
     const response: ApiResponse = { message: 'Hello, World!', isValid: true };
-    const webhookResponse: AxiosResponse<any> | undefined =
-      await this.makeWebhookRequest(response);
 
-    if (webhookResponse) {
-      console.log('Webhook response:', webhookResponse.data);
-      // Include the webhook response data in the response object
-      response.webhookResponseData = webhookResponse.data;
-    } else {
-      console.error('Webhook request failed');
+    try {
+      // Fetch data from the webhook endpoint
+      const webhookResponse: AxiosResponse<any, any> | undefined =
+        await this.httpService.get(this.webhookUrl).toPromise();
+
+      if (webhookResponse) {
+        console.log('Webhook response:', webhookResponse.data);
+
+        // Populate the webhookResponseData array with the data received from the webhook endpoint
+        response.webhookResponseData = webhookResponse.data;
+      } else {
+        console.error('Webhook request failed');
+        response.webhookResponseData = []; // Set webhookResponseData to an empty array in case of an error
+      }
+    } catch (error) {
+      console.error('Error fetching data from webhook:', error.message);
+      response.webhookResponseData = []; // Set webhookResponseData to an empty array in case of an error
     }
 
     return response;
@@ -55,39 +62,33 @@ export class AppController {
     @Headers('authorization') authorizationHeader: string,
     @Body() body: any,
   ): Promise<ApiResponse> {
-    const authorizedUUID = authorizationHeader?.split(' ')[1]; // Extract the UUID from the Authorization header
+    const authorizedUUID = authorizationHeader?.split(' ')[1];
 
-    // Check if the provided UUID matches the allowed UUID
     if (!authorizedUUID || !this.isValidUUID(authorizedUUID)) {
       return { message: 'Unauthorized', isValid: false };
     }
 
-    // If the UUID is valid, respond with a JSON object containing the message and isValid value
     const response: ApiResponse = { message: 'Hello, World!', isValid: true };
-    const webhookResponse: AxiosResponse<any> | undefined =
-      await this.makeWebhookRequest(response);
 
-    if (webhookResponse) {
-      console.log('Webhook response:', webhookResponse.data);
-      // Include the webhook response data in the response object
-      response.webhookResponseData = webhookResponse.data;
-    } else {
-      console.error('Webhook request failed');
+    try {
+      // Fetch data from the webhook endpoint
+      const webhookResponse: AxiosResponse<any, any> | undefined =
+        await this.httpService.get(this.webhookUrl).toPromise();
+
+      if (webhookResponse) {
+        console.log('Webhook response:', webhookResponse.data);
+
+        // Populate the webhookResponseData array with the data received from the webhook endpoint
+        response.webhookResponseData = webhookResponse.data;
+      } else {
+        console.error('Webhook request failed');
+        response.webhookResponseData = []; // Set webhookResponseData to an empty array in case of an error
+      }
+    } catch (error) {
+      console.error('Error fetching data from webhook:', error.message);
+      response.webhookResponseData = []; // Set webhookResponseData to an empty array in case of an error
     }
 
     return response;
-  }
-
-  private async makeWebhookRequest(
-    responseData: ApiResponse,
-  ): Promise<AxiosResponse<any> | undefined> {
-    try {
-      return await this.httpService
-        .post(this.webhookUrl, responseData)
-        .toPromise();
-    } catch (error) {
-      console.error('Error sending webhook:', error.message);
-      return undefined;
-    }
   }
 }
