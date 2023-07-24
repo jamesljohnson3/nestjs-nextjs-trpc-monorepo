@@ -59,13 +59,25 @@ export class AppController {
       const [webhookResponse1, webhookResponse2, webhookResponse3] =
         await Promise.all([
           this.httpService
-            .post(this.webhookUrl, { key: 'content' })
+            .post(this.webhookUrl, {
+              key: 'content',
+              field1,
+              field2 /* Add more fields as needed */,
+            })
             .toPromise(),
           this.httpService
-            .post(this.webhookUrl2, { key: 'content' })
+            .post(this.webhookUrl2, {
+              key: 'content',
+              field1,
+              field2 /* Add more fields as needed */,
+            })
             .toPromise(),
           this.httpService
-            .post(this.webhookUrl3, { key: 'content' })
+            .post(this.webhookUrl3, {
+              key: 'content',
+              field1,
+              field2 /* Add more fields as needed */,
+            })
             .toPromise(),
         ]);
 
