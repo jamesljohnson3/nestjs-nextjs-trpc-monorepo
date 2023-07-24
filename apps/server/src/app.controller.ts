@@ -4,6 +4,7 @@ import { HttpService } from '@nestjs/axios';
 
 interface ApiResponse {
   message: string;
+  key: string;
   isValid: boolean;
   webhookResponseData?: any[]; // Change this to the desired type
 }
@@ -30,10 +31,14 @@ export class AppController {
     const authorizedUUID = authorizationHeader?.split(' ')[1];
 
     if (!authorizedUUID || !this.isValidUUID(authorizedUUID)) {
-      return { message: 'Unauthorized', isValid: false };
+      return { message: 'Unauthorized', isValid: false, key: 'null' };
     }
 
-    const response: ApiResponse = { message: 'Hello, World!', isValid: true };
+    const response: ApiResponse = {
+      message: 'Hello, World!',
+      isValid: true,
+      key: '123456789',
+    };
 
     try {
       // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
@@ -71,10 +76,14 @@ export class AppController {
     const authorizedUUID = authorizationHeader?.split(' ')[1];
 
     if (!authorizedUUID || !this.isValidUUID(authorizedUUID)) {
-      return { message: 'Unauthorized', isValid: false };
+      return { message: 'Unauthorized', isValid: false, key: 'null' };
     }
 
-    const response: ApiResponse = { message: 'Hello, World!', isValid: true };
+    const response: ApiResponse = {
+      message: 'Hello, World!',
+      isValid: true,
+      key: '123456789',
+    };
 
     try {
       // Fetch data from the webhook endpoint using Promise.all to handle multiple requests simultaneously
