@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Headers,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Headers } from '@nestjs/common';
 
 @Controller('actions')
 export class AppController {
@@ -17,7 +10,7 @@ export class AppController {
 
     // Check if the provided UUID matches the allowed UUID
     if (!authorizedUUID || authorizedUUID !== this.allowedUUID) {
-      throw new UnauthorizedException('Unauthorized');
+      return { message: 'Unauthorized' };
     }
 
     // If the UUID is valid, respond with "Hello, World!"
@@ -33,7 +26,7 @@ export class AppController {
 
     // Check if the provided UUID matches the allowed UUID
     if (!authorizedUUID || authorizedUUID !== this.allowedUUID) {
-      throw new UnauthorizedException('Unauthorized');
+      return { message: 'Unauthorized' };
     }
 
     // If the UUID is valid, respond with "Hello, World!"
