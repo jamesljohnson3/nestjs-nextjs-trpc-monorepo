@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Headers, Query } from '@nestjs/common';
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus } from '@nestjs/common';
 
 interface ApiResponse {
   message: string;
@@ -16,8 +15,7 @@ interface PostData {
 }
 @Controller('actions')
 export class AppController {
-  private allowedUUID: string;
-
+  private readonly allowedUUID = '22-22-22'; // Replace with your authorized UUID
   private webhookUrl =
     'https://snap-jj3media-icloud-com.eu-1.celonis.cloud/ems-automation/public/api/root/a0e537b1-b88f-434c-a659-0cadea64b085/hook/f03auw3rub1gl5djqehmslc4rpm8j33e'; // Replace this with your actual webhook URL
   private webhookUrl2 =
@@ -27,44 +25,14 @@ export class AppController {
 
   constructor(private httpService: HttpService) {}
 
-  private async fetchAllowedUUID(authorizationHeader: string): Promise<string> {
-    const authorizedUUID = authorizationHeader.split(' ')[1];
-
-    const apiUrl = `https://api.clerk.dev/v1/users/${authorizedUUID}`; // Replace with the actual Clerk API endpoint
-
-    // Add your custom headers here
-    const headers: AxiosRequestConfig = {
-      headers: {
-        Authorization: 'Bearer sk_test_6DFbGiI9kPomuly8sqJQSpNHgYqDx3vgp3', // Replace with your access token or API key
-        'Content-Type': 'application/json', // Example header, modify as needed
-      },
-    };
-
-    try {
-      const response = await this.httpService
-        .get<string>(apiUrl, headers)
-        .toPromise();
-
-      if (!response || !response.data) {
-        throw new Error('API response or data is missing.');
-      }
-
-      return response.data;
-    } catch (error) {
-      throw new HttpException(
-        'Failed to fetch allowed UUID',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  private isValidUUID(fetchAllowedUUID: string): boolean {
+  private isValidUUID(uuid: string): boolean {
     // Validate the provided UUID here (e.g., using a library like "uuid")
     // Return true if the UUID is valid, otherwise return false
     // Replace the example validation logic below with your actual validation logic
-    return fetchAllowedUUID === this.allowedUUID;
+    return uuid === this.allowedUUID;
   }
 
+  @Get() // Handles GET requests to /actions
   async getAction(
     @Headers('authorization') authorizationHeader: string,
     @Query('uuid') uuid: string,
@@ -77,16 +45,6 @@ export class AppController {
       return { message: 'Unauthorized', isValid: false, key: 'null' };
     }
 
-    if (!this.allowedUUID) {
-      try {
-        this.allowedUUID = await this.fetchAllowedUUID(authorizationHeader);
-      } catch (error) {
-        throw new HttpException(
-          'Failed to fetch allowed UUID',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
     const response: ApiResponse = {
       message: 'Hello, World!',
       isValid: true,
