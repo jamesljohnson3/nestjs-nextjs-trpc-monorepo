@@ -35,7 +35,7 @@ export class AppController {
     // Add your custom headers here
     const headers: AxiosRequestConfig = {
       headers: {
-        Authorization: 'Bearer sk_live_xe6bWwkHxYCOaFBRFdO1gENtvS8EgG1scg', // Replace with your access token or API key
+        Authorization: 'Bearer YOUR_ACCESS_TOKEN', // Replace with your access token or API key
         'Content-Type': 'application/json', // Example header, modify as needed
       },
     };
