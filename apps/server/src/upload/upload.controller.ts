@@ -7,7 +7,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import * as AWS from 'aws-sdk';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 @Controller('upload')
 export class UploadController {
@@ -28,11 +28,13 @@ export class UploadController {
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
-      // Configure AWS S3 client
-      const s3 = new AWS.S3({
-        accessKeyId: 'SCWYVGM43X872NJ79E5H', // Replace with your Scaleway access key
-        secretAccessKey: 'f7f718d4-201e-44ae-bc51-38211ee6e22e', // Replace with your Scaleway secret key
-        endpoint: 'https://v1storage.unlimitednow.site.s3.fr-par.scw.cloud', // Replace with your Scaleway endpoint
+      // Configure AWS S3 client (AWS SDK version 3)
+
+      const s3 = new S3Client({
+        credentials: {
+          accessKeyId: 'SCWYVGM43X872NJ79E5H', // Replace with your Scaleway access key
+          secretAccessKey: 'f7f718d4-201e-44ae-bc51-38211ee6e22e', // Replace with your Scaleway secret key
+        },
         region: 'fr-par', // Replace with your desired region
       });
 
@@ -43,7 +45,8 @@ export class UploadController {
         Body: file.buffer,
       };
 
-      const uploadResponse = await s3.upload(uploadParams).promise();
+      const command = new PutObjectCommand(uploadParams);
+      const uploadResponse = await s3.send(command);
 
       console.log('File uploaded to Scaleway:', uploadResponse);
 
