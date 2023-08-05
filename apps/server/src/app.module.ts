@@ -6,6 +6,7 @@ import { UploadModule } from './upload/upload.module'; // Import the UploadModul
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BucketModule } from './bucket/bucket.module'; // Import the BucketModule
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -14,6 +15,9 @@ import { BucketModule } from './bucket/bucket.module'; // Import the BucketModul
     HttpModule,
     UploadModule, // Add the UploadModule here
     BucketModule, // Add the BucketModule here
+    MulterModule.register({
+      dest: './uploads', // Destination folder for uploaded files
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
