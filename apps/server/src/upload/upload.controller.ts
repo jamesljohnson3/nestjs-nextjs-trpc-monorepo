@@ -36,8 +36,7 @@ export class UploadController {
           secretAccessKey: 'f7f718d4-201e-44ae-bc51-38211ee6e22e', // Replace with your Scaleway secret key
         },
         region: 'fr-par', // Replace with your desired region
-        endpoint:
-          'https://http://v1storage.unlimitednow.site.s3.fr-par.scw.cloud/', // Scaleway S3 endpoint
+        endpoint: 'v1storage.unlimitednow.site.s3.fr-par.scw.cloud/', // Scaleway S3 endpoint
       });
 
       // Upload the file to Scaleway S3 bucket
