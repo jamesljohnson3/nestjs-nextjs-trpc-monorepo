@@ -35,7 +35,10 @@ export class UploadController {
       console.log('File uploaded to Scaleway:', response.data);
 
       // Send object details to another server (your Next.js frontend or another API)
-      await axios.post('http://localhost:3000/api/upload', data);
+      await axios.post(
+        'https://accounts.nassawautobrokers.com/api/upload',
+        data,
+      );
 
       return { message: 'File uploaded and object details sent' };
     } catch (error) {
