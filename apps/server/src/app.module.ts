@@ -5,6 +5,7 @@ import { TrpcModule } from '@server/trpc/trpc.module';
 import { UploadModule } from './upload/upload.module'; // Import the UploadModule
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BucketModule } from './bucket/bucket.module'; // Import the BucketModule
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AppService } from './app.service';
     TrpcModule,
     HttpModule,
     UploadModule, // Add the UploadModule here
+    BucketModule, // Add the BucketModule here
   ],
   controllers: [AppController],
   providers: [AppService],
