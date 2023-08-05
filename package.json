@@ -16,6 +16,7 @@
   "dependencies": {
     "@nestjs/axios": "^3.0.0",
     "@xata.io/client": "^0.24.3",
+    "aws-sdk": "^2.1430.0",
     "axios": "^1.4.0",
     "multer": "^1.4.5-lts.1"
   }
