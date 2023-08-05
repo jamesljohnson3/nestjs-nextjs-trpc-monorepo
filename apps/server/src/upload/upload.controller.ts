@@ -5,31 +5,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 @Controller('upload')
 export class UploadController {
   @Post()
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          return cb(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
       // Configure Scaleway S3 client (AWS SDK version 3)
-
       const s3 = new S3Client({
         credentials: {
           accessKeyId: 'SCWYVGM43X872NJ79E5H', // Replace with your Scaleway access key
@@ -42,7 +27,7 @@ export class UploadController {
       // Upload the file to Scaleway S3 bucket
       const uploadParams = {
         Bucket: 'v1storage.unlimitednow.site', // Replace with your bucket name
-        Key: file.originalname,
+        Key: `${Date.now()}${extname(file.originalname)}`, // Using a timestamp as the filename
         Body: file.buffer,
       };
 
