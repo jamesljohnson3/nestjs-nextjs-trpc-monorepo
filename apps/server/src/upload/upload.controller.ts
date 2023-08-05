@@ -41,7 +41,7 @@ export class UploadController {
 
       // Upload the file to Scaleway S3 bucket
       const uploadParams = {
-        Bucket: 'v1storage.unlimitednow.site', // Replace with your bucket name
+        Bucket: '', // Replace with your bucket name
         Key: file.originalname,
         Body: file.buffer,
       };
