@@ -23,7 +23,7 @@ export class UploadController {
     try {
       // Upload to Scaleway bucket
       const response = await axios.post(
-        'https://v1storage.unlimitednow.site.s3.fr-par.scw.cloud/v1/storage/v1storage.unlimitednow.site',
+        'http://v1storage.unlimitednow.site.s3.fr-par.scw.cloud/v1/storage/v1storage.unlimitednow.site',
         file.buffer,
         {
           headers: {
