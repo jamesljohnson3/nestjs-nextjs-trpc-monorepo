@@ -28,15 +28,19 @@ export class OtpService {
 
     return otpCode;
   }
+
   verifyOtp(verifyOtpDto: VerifyOtpDto, email: string, currentUrl: string) {
     // Verify OTP logic
+    const secret = this.otpSecrets[verifyOtpDto.email];
     const isValid = speakeasy.totp.verify({
-      secret: this.otpSecrets[verifyOtpDto.email],
+      secret,
       encoding: 'base32',
-      token: verifyOtpDto.otp, // Use 'verifyOtpDto.otp' instead of 'verifyOtpDto.otpCode'
+      token: verifyOtpDto.otp,
     });
 
     if (isValid) {
+      console.log('OTP verification successful for email:', verifyOtpDto.email);
+
       // Send webhook request for email confirmation
       this.emailService.sendOtpEmail(
         verifyOtpDto.email,
@@ -49,6 +53,7 @@ export class OtpService {
         isValid: true,
       };
     } else {
+      console.log('OTP verification failed for email:', verifyOtpDto.email);
       return {
         message: 'Invalid OTP',
         isValid: false,
