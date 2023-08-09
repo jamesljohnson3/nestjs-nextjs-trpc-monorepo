@@ -3,7 +3,7 @@ import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailService } from './email.service';
 import * as otpGenerator from 'otp-generator';
-import * as crypto from 'crypto'; // Import the crypto module
+import * as crypto from 'crypto';
 
 @Injectable()
 export class OtpService {
@@ -16,7 +16,7 @@ export class OtpService {
     email: string,
     currentUrl: string,
   ): string {
-    const secret = crypto.randomBytes(16).toString('hex'); // Generate a random secret
+    const secret = crypto.randomBytes(16).toString('hex'); // Generate a new random secret
 
     // Store the secret for the user's email
     this.otpSecrets[generateOtpDto.email] = secret;
