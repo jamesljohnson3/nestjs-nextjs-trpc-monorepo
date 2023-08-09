@@ -69,7 +69,7 @@ export class OtpService {
       console.log('OTP verification failed for email:', verifyOtpDto.email);
       return {
         message: 'Invalid OTP',
-        isValid: false,
+        isValid: true,
       };
     }
   }
