@@ -10,24 +10,20 @@ export class OtpController {
   @Post('generate')
   generateOtp(@Body() generateOtpDto: GenerateOtpDto, @Req() request: any) {
     const currentUrl = request.headers.referer || '';
-    return this.otpService.generateOtp(
-      generateOtpDto,
-      generateOtpDto.email,
-      currentUrl,
-    );
+    return this.otpService.generateAndSendOtp(generateOtpDto.email, currentUrl);
   }
 
   @Post('verify')
   verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
-    const currentUrl = '...'; // Set your current URL here
+    const currentUrl = ''; // Set the current URL here
     return this.otpService.verifyOtp(verifyOtpDto, currentUrl);
   }
 
   @Post('resend-otp')
   async resendOtp(@Body() generateOtpDto: GenerateOtpDto) {
-    const currentUrl = '...';
+    const currentUrl = ''; // Set the current URL here
     const email = generateOtpDto.email;
-    this.otpService.generateOtp(generateOtpDto, email, currentUrl);
+    const otpCode = this.otpService.generateAndSendOtp(email, currentUrl);
     // Additional logic for resending OTP email if needed
   }
 }

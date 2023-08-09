@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { GenerateOtpDto } from './dto/generate-otp.dto';
-import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailService } from './email.service';
 import * as speakeasy from 'speakeasy';
-import * as crypto from 'crypto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Injectable()
 export class OtpService {
@@ -11,24 +9,18 @@ export class OtpService {
 
   constructor(private readonly emailService: EmailService) {}
 
-  generateOtp(
-    generateOtpDto: GenerateOtpDto,
-    email: string,
-    currentUrl: string,
-  ): string {
-    const secret = speakeasy.generateSecret({ length: 20 }); // Generate a new secret
+  generateAndSendOtp(email: string, currentUrl: string): string {
+    const secret = speakeasy.generateSecret().base32;
 
-    // Store the secret for the user's email
-    this.otpSecrets.set(generateOtpDto.email, secret.base32);
+    this.otpSecrets.set(email, secret);
 
-    // Generate the TOTP
     const otpCode = speakeasy.totp({
-      secret: secret.base32,
-      digits: 6,
+      secret,
+      encoding: 'base32',
     });
 
     // Send OTP email
-    this.emailService.sendOtpEmail(generateOtpDto.email, otpCode, currentUrl);
+    this.emailService.sendOtpEmail(email, otpCode, currentUrl);
 
     return otpCode;
   }
@@ -47,11 +39,7 @@ export class OtpService {
       };
     }
 
-    const isValid = speakeasy.totp.verify({
-      secret,
-      encoding: 'base32',
-      token: verifyOtpDto.otp,
-    });
+    const isValid = this.verifyOtpAsync(secret, verifyOtpDto.otp);
 
     if (isValid) {
       // Remove the secret after successful verification
@@ -74,6 +62,21 @@ export class OtpService {
         message: 'Invalid OTP',
         isValid: false,
       };
+    }
+  }
+
+  private verifyOtpAsync(secret: string, otp: string): boolean {
+    try {
+      const isValid = speakeasy.totp.verify({
+        secret,
+        encoding: 'base32',
+        token: otp,
+      });
+
+      return isValid;
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      return false;
     }
   }
 }
