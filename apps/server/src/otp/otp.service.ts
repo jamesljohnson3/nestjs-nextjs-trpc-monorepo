@@ -39,6 +39,10 @@ export class OtpService {
   ): Promise<{ message: string; isValid: boolean }> {
     const storedSecretHash = this.otpSecretHashes.get(verifyOtpDto.email);
     if (!storedSecretHash) {
+      console.log(
+        'Stored secret hash not found for email:',
+        verifyOtpDto.email,
+      );
       return {
         message: 'Invalid OTP',
         isValid: false,
@@ -50,7 +54,12 @@ export class OtpService {
       .update(verifyOtpDto.otp)
       .digest('hex');
 
+    console.log('Stored Secret Hash:', storedSecretHash);
+    console.log('Provided Secret Hash:', providedSecretHash);
+
     if (storedSecretHash === providedSecretHash) {
+      console.log('OTP verification successful for email:', verifyOtpDto.email);
+
       // Remove the secret hash after successful verification
       this.otpSecretHashes.delete(verifyOtpDto.email);
 
@@ -69,7 +78,7 @@ export class OtpService {
       console.log('OTP verification failed for email:', verifyOtpDto.email);
       return {
         message: 'Invalid OTP',
-        isValid: true,
+        isValid: false,
       };
     }
   }
