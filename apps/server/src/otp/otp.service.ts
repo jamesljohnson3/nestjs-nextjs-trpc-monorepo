@@ -3,16 +3,12 @@ import * as speakeasy from 'speakeasy';
 import { GenerateOtpDto } from './dto/generate-otp.dto'; // Keep this import statement
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailService } from './email.service';
-import { WebhookService } from './webhook.service';
 
 @Injectable()
 export class OtpService {
   private otpSecrets: { [key: string]: string } = {}; // Store secrets by user email
 
-  constructor(
-    private readonly emailService: EmailService,
-    private readonly webhookService: WebhookService,
-  ) {}
+  constructor(private readonly emailService: EmailService) {}
 
   generateOtp(generateOtpDto: GenerateOtpDto): string {
     const secret = speakeasy.generateSecret();
@@ -39,14 +35,10 @@ export class OtpService {
 
     if (isValid) {
       // Send webhook requests
-      const webhookResponseData = this.webhookService.sendWebhookRequest(
-        verifyOtpDto.email,
-      );
 
       return {
         message: 'OTP verification successful',
         isValid: true,
-        webhookResponseData,
       };
     } else {
       return {
