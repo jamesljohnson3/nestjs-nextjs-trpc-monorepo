@@ -11,6 +11,7 @@ export class OtpService {
 
   generateAndSendOtp(email: string, currentUrl: string): string {
     const secret = speakeasy.generateSecret().base32;
+    console.log('Generated secret:', secret);
 
     this.otpSecrets.set(email, secret);
 
@@ -18,6 +19,7 @@ export class OtpService {
       secret,
       encoding: 'base32',
     });
+    console.log('Generated OTP code:', otpCode);
 
     // Send OTP email
     this.emailService.sendOtpEmail(email, otpCode, currentUrl);
@@ -46,6 +48,7 @@ export class OtpService {
       this.otpSecrets.delete(verifyOtpDto.email);
 
       // Send webhook request for email confirmation
+      console.log('Sending confirmation email for email:', verifyOtpDto.email);
       await this.emailService.sendOtpEmail(
         verifyOtpDto.email,
         'CONFIRMED',
@@ -72,6 +75,8 @@ export class OtpService {
         encoding: 'base32',
         token: otp,
       });
+
+      console.log('OTP verification result:', isValid);
 
       return isValid;
     } catch (error) {
