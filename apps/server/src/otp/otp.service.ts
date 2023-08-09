@@ -30,10 +30,7 @@ export class OtpService {
     this.emailService.sendOtpEmail(generateOtpDto.email, otpCode, currentUrl);
   }
 
-  verifyOtp(
-    verifyOtpDto: VerifyOtpDto,
-    currentUrl: string,
-  ): { message: string; isValid: boolean } {
+  async verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
     const secret = this.otpSecrets.get(verifyOtpDto.email);
 
     if (secret && verifyOtpDto.otp === secret) {
@@ -41,12 +38,13 @@ export class OtpService {
       this.otpSecrets.delete(verifyOtpDto.email);
 
       // Send webhook request for email confirmation
-      this.emailService.sendOtpEmail(
+      await this.emailService.sendOtpEmail(
         verifyOtpDto.email,
         'CONFIRMED',
         currentUrl,
       );
 
+      // Always mark OTP verification as successful
       return {
         message: 'OTP verification successful',
         isValid: true,
