@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import * as speakeasy from 'speakeasy';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailService } from './email.service';
+import * as otpGenerator from 'otp-generator';
+import * as crypto from 'crypto'; // Import the crypto module
+
 @Injectable()
 export class OtpService {
   private otpSecrets: { [key: string]: string } = {}; // Store secrets by user email
@@ -14,12 +16,14 @@ export class OtpService {
     email: string,
     currentUrl: string,
   ): string {
-    const secret = speakeasy.generateSecret();
-    this.otpSecrets[generateOtpDto.email] = secret.base32;
+    const secret = crypto.randomBytes(16).toString('hex'); // Generate a random secret
 
-    const otpCode = speakeasy.totp({
-      secret: secret.base32,
-      encoding: 'base32',
+    // Store the secret for the user's email
+    this.otpSecrets[generateOtpDto.email] = secret;
+
+    // Generate the OTP using otp-generator
+    const otpCode = otpGenerator.generate(6, {
+      digits: true,
     });
 
     // Send OTP email
@@ -31,11 +35,7 @@ export class OtpService {
   verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
     // Verify OTP logic
     const secret = this.otpSecrets[verifyOtpDto.email];
-    const isValid = speakeasy.totp.verify({
-      secret,
-      encoding: 'base32',
-      token: verifyOtpDto.otp,
-    });
+    const isValid = verifyOtpDto.otp === secret; // Directly compare OTPs
 
     if (isValid) {
       console.log('OTP verification successful for email:', verifyOtpDto.email);
