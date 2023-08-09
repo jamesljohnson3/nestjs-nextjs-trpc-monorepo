@@ -7,12 +7,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BucketModule } from './bucket/bucket.module'; // Import the BucketModule
 import { MulterModule } from '@nestjs/platform-express';
+import { OtpModule } from './otp/otp.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TrpcModule,
     HttpModule,
+    OtpModule,
     UploadModule, // Add the UploadModule here
     BucketModule, // Add the BucketModule here
     MulterModule.register({
