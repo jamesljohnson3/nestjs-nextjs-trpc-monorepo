@@ -32,10 +32,10 @@ export class OtpController {
 
     if (verificationResult.isValid) {
       // Your logic for handling successful verification
-      return { message: verificationResult.message };
+      return { success: true, message: verificationResult.message };
     } else {
       // Your logic for handling failed verification
-      return { message: verificationResult.message };
+      return { success: false, message: verificationResult.message };
     }
   }
 
