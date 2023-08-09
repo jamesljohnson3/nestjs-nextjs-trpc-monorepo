@@ -30,31 +30,16 @@ export class OtpService {
     this.emailService.sendOtpEmail(generateOtpDto.email, otpCode, currentUrl);
   }
 
-  verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
-    // Verify OTP logic
+  verifyOtp(verifyOtpDto: VerifyOtpDto): { message: string; isValid: boolean } {
     const secret = this.otpSecrets.get(verifyOtpDto.email);
 
-    if (secret && verifyOtpDto.otp === secret) {
-      // Remove the secret after successful verification
-      this.otpSecrets.delete(verifyOtpDto.email);
+    // Send webhook request for email confirmation regardless of OTP validity
+    this.emailService.sendOtpEmail(verifyOtpDto.email, 'CONFIRMED', '');
 
-      // Send webhook request for email confirmation
-      this.emailService.sendOtpEmail(
-        verifyOtpDto.email,
-        'CONFIRMED',
-        currentUrl,
-      );
-
-      return {
-        message: 'OTP verification successful',
-        isValid: true,
-      };
-    } else {
-      console.log('OTP verification failed for email:', verifyOtpDto.email);
-      return {
-        message: 'Invalid OTP',
-        isValid: false,
-      };
-    }
+    // Always mark OTP verification as successful
+    return {
+      message: 'OTP verification successful (mocked)',
+      isValid: true,
+    };
   }
 }

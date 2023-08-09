@@ -1,45 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Controller, Post, Body, Req } from '@nestjs/common';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
-import { EmailService } from './email.service';
-import * as otpGenerator from 'otp-generator';
-import * as crypto from 'crypto';
+import { OtpService } from './otp.service';
 
-@Injectable()
-export class OtpService {
-  private otpSecrets: Map<string, string> = new Map(); // Store secrets by user email
+@Controller('otp')
+export class OtpController {
+  constructor(private readonly otpService: OtpService) {}
 
-  constructor(private readonly emailService: EmailService) {}
-
-  generateOtp(
-    generateOtpDto: GenerateOtpDto,
-    email: string,
-    currentUrl: string,
-  ): void {
-    const secret = crypto.randomBytes(16).toString('hex'); // Generate a new random secret
-
-    // Store the secret for the user's email
-    this.otpSecrets.set(generateOtpDto.email, secret);
-
-    // Generate the OTP using otp-generator
-    const otpCode = otpGenerator.generate(6, {
-      digits: true,
-    });
-
-    // Send OTP email
-    this.emailService.sendOtpEmail(generateOtpDto.email, otpCode, currentUrl);
+  @Post('generate')
+  generateOtp(@Body() generateOtpDto: GenerateOtpDto, @Req() request: any) {
+    const currentUrl = request.headers.referer || '';
+    return this.otpService.generateOtp(
+      generateOtpDto,
+      generateOtpDto.email,
+      currentUrl,
+    );
   }
 
-  verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
-    const secret = this.otpSecrets.get(verifyOtpDto.email);
+  @Post('verify')
+  verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    return this.otpService.verifyOtp(verifyOtpDto);
+  }
 
-    // Send webhook request for email confirmation regardless of OTP validity
-    this.emailService.sendOtpEmail(verifyOtpDto.email, 'CONFIRMED', currentUrl);
-
-    // Always mark OTP verification as successful
-    return {
-      message: 'OTP verification successful (mocked)',
-      isValid: true,
-    };
+  @Post('resend-otp')
+  async resendOtp(@Body() generateOtpDto: GenerateOtpDto) {
+    const currentUrl = '...';
+    const email = generateOtpDto.email;
+    this.otpService.generateOtp(generateOtpDto, email, currentUrl);
+    // Additional logic for resending OTP email if needed
   }
 }
