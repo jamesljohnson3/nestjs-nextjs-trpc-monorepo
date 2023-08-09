@@ -35,6 +35,9 @@ export class OtpService {
   verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
     // Verify OTP logic
     const secret = this.otpSecrets.get(verifyOtpDto.email);
+    console.log('Received OTP:', verifyOtpDto.otp);
+    console.log('Stored Secret:', secret);
+
     const isValid = secret && verifyOtpDto.otp === secret; // Directly compare OTPs
 
     if (isValid) {
