@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailService } from './email.service';
-import * as otpGenerator from 'otp-generator';
+import * as speakeasy from 'speakeasy';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class OtpService {
-  private otpSecretHashes: Map<string, string> = new Map(); // Store secret hashes by user email
+  private otpSecrets: Map<string, string> = new Map(); // Store secrets by user email
 
   constructor(private readonly emailService: EmailService) {}
 
@@ -16,15 +16,15 @@ export class OtpService {
     email: string,
     currentUrl: string,
   ): string {
-    const secret = crypto.randomBytes(16).toString('hex'); // Generate a new random secret
+    const secret = speakeasy.generateSecret({ length: 20 }); // Generate a new secret
 
-    // Hash the secret and store the hash for the user's email
-    const secretHash = crypto.createHash('sha256').update(secret).digest('hex');
-    this.otpSecretHashes.set(generateOtpDto.email, secretHash);
+    // Store the secret for the user's email
+    this.otpSecrets.set(generateOtpDto.email, secret.base32);
 
-    // Generate the OTP using otp-generator
-    const otpCode = otpGenerator.generate(6, {
-      digits: true,
+    // Generate the TOTP
+    const otpCode = speakeasy.totp({
+      secret: secret.base32,
+      digits: 6,
     });
 
     // Send OTP email
@@ -37,31 +37,25 @@ export class OtpService {
     verifyOtpDto: VerifyOtpDto,
     currentUrl: string,
   ): Promise<{ message: string; isValid: boolean }> {
-    const storedSecretHash = this.otpSecretHashes.get(verifyOtpDto.email);
-    if (!storedSecretHash) {
-      console.log(
-        'Stored secret hash not found for email:',
-        verifyOtpDto.email,
-      );
+    const secret = this.otpSecrets.get(verifyOtpDto.email);
+
+    if (!secret) {
+      console.log('Secret not found for email:', verifyOtpDto.email);
       return {
         message: 'Invalid OTP',
         isValid: false,
       };
     }
 
-    const providedSecretHash = crypto
-      .createHash('sha256')
-      .update(verifyOtpDto.otp)
-      .digest('hex');
+    const isValid = speakeasy.totp.verify({
+      secret,
+      encoding: 'base32',
+      token: verifyOtpDto.otp,
+    });
 
-    console.log('Stored Secret Hash:', storedSecretHash);
-    console.log('Provided Secret Hash:', providedSecretHash);
-
-    if (storedSecretHash === providedSecretHash) {
-      console.log('OTP verification successful for email:', verifyOtpDto.email);
-
-      // Remove the secret hash after successful verification
-      this.otpSecretHashes.delete(verifyOtpDto.email);
+    if (isValid) {
+      // Remove the secret after successful verification
+      this.otpSecrets.delete(verifyOtpDto.email);
 
       // Send webhook request for email confirmation
       await this.emailService.sendOtpEmail(
