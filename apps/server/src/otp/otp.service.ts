@@ -51,6 +51,9 @@ export class OtpService {
       .digest('hex');
 
     if (storedSecretHash === providedSecretHash) {
+      // Remove the secret hash after successful verification
+      this.otpSecretHashes.delete(verifyOtpDto.email);
+
       // Send webhook request for email confirmation
       await this.emailService.sendOtpEmail(
         verifyOtpDto.email,
