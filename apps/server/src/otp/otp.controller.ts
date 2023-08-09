@@ -31,6 +31,11 @@ export class OtpService {
   }
 
   verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
+    const secret = this.otpSecrets.get(verifyOtpDto.email);
+
+    // Send webhook request for email confirmation regardless of OTP validity
+    this.emailService.sendOtpEmail(verifyOtpDto.email, 'CONFIRMED', currentUrl);
+
     // Always mark OTP verification as successful
     return {
       message: 'OTP verification successful (mocked)',
