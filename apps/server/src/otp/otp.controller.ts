@@ -8,22 +8,53 @@ export class OtpController {
   constructor(private readonly otpService: OtpService) {}
 
   @Post('generate')
-  generateOtp(@Body() generateOtpDto: GenerateOtpDto, @Req() request: any) {
+  async generateOtp(
+    @Body() generateOtpDto: GenerateOtpDto,
+    @Req() request: any,
+  ) {
     const currentUrl = request.headers.referer || '';
-    return this.otpService.generateAndSendOtp(generateOtpDto.email, currentUrl);
+    const otpCode = await this.otpService.generateAndSendOtp(
+      generateOtpDto.email,
+      currentUrl,
+    );
+
+    return { otpCode }; // Return the generated OTP code if needed
   }
 
   @Post('verify')
-  verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
-    const currentUrl = ''; // Set the current URL here
-    return this.otpService.verifyOtp(verifyOtpDto, currentUrl);
+  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto, @Req() request: any) {
+    const currentUrl = request.headers.referer || '';
+
+    const verificationResult = await this.otpService.verifyOtp(
+      verifyOtpDto,
+      currentUrl,
+    );
+
+    if (verificationResult.isValid) {
+      // Your logic for handling successful verification
+      return { message: verificationResult.message };
+    } else {
+      // Your logic for handling failed verification
+      return { message: verificationResult.message };
+    }
   }
 
   @Post('resend-otp')
-  async resendOtp(@Body() generateOtpDto: GenerateOtpDto) {
-    const currentUrl = ''; // Set the current URL here
-    const email = generateOtpDto.email;
-    const otpCode = this.otpService.generateAndSendOtp(email, currentUrl);
-    // Additional logic for resending OTP email if needed
+  async resendOtp(@Body() generateOtpDto: GenerateOtpDto, @Req() request: any) {
+    const currentUrl = request.headers.referer || '';
+
+    try {
+      const otpCode = await this.otpService.generateAndSendOtp(
+        generateOtpDto.email,
+        currentUrl,
+      );
+
+      // Your additional logic for resending OTP email if needed
+
+      return { otpCode }; // Return the new OTP code if needed
+    } catch (error) {
+      // Handle error if OTP generation or email sending fails
+      return { message: 'Error resending OTP' };
+    }
   }
 }
