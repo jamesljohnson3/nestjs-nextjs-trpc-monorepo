@@ -7,7 +7,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class OtpService {
-  private otpSecretHashes: Map<string, string> = new Map(); // Store secret hashes by user email
+  private otpSecrets: Map<string, string> = new Map(); // Store secrets by user email
 
   constructor(private readonly emailService: EmailService) {}
 
@@ -15,12 +15,11 @@ export class OtpService {
     generateOtpDto: GenerateOtpDto,
     email: string,
     currentUrl: string,
-  ): string {
+  ): void {
     const secret = crypto.randomBytes(16).toString('hex'); // Generate a new random secret
 
-    // Hash the secret and store the hash for the user's email
-    const secretHash = crypto.createHash('sha256').update(secret).digest('hex');
-    this.otpSecretHashes.set(generateOtpDto.email, secretHash);
+    // Store the secret for the user's email
+    this.otpSecrets.set(generateOtpDto.email, secret);
 
     // Generate the OTP using otp-generator
     const otpCode = otpGenerator.generate(6, {
@@ -29,28 +28,15 @@ export class OtpService {
 
     // Send OTP email
     this.emailService.sendOtpEmail(generateOtpDto.email, otpCode, currentUrl);
-
-    return otpCode;
   }
 
-  async verifyOtp(
-    verifyOtpDto: VerifyOtpDto,
-    currentUrl: string,
-  ): Promise<{ message: string; isValid: boolean }> {
-    const storedSecretHash = this.otpSecretHashes.get(verifyOtpDto.email);
-    if (!storedSecretHash) {
-      return {
-        message: 'Invalid OTP',
-        isValid: false,
-      };
-    }
+  async verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
+    const secret = this.otpSecrets.get(verifyOtpDto.email);
 
-    const providedSecretHash = crypto
-      .createHash('sha256')
-      .update(verifyOtpDto.otp)
-      .digest('hex');
+    if (secret && verifyOtpDto.otp === secret) {
+      // Remove the secret after successful verification
+      this.otpSecrets.delete(verifyOtpDto.email);
 
-    if (storedSecretHash === providedSecretHash) {
       // Send webhook request for email confirmation
       await this.emailService.sendOtpEmail(
         verifyOtpDto.email,
@@ -58,6 +44,7 @@ export class OtpService {
         currentUrl,
       );
 
+      // Always mark OTP verification as successful
       return {
         message: 'OTP verification successful',
         isValid: true,
