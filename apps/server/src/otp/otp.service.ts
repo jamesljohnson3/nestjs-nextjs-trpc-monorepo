@@ -7,7 +7,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class OtpService {
-  private otpSecrets: { [key: string]: string } = {}; // Store secrets by user email
+  private otpSecrets: Map<string, string> = new Map(); // Store secrets by user email
 
   constructor(private readonly emailService: EmailService) {}
 
@@ -19,7 +19,7 @@ export class OtpService {
     const secret = crypto.randomBytes(16).toString('hex'); // Generate a new random secret
 
     // Store the secret for the user's email
-    this.otpSecrets[generateOtpDto.email] = secret;
+    this.otpSecrets.set(generateOtpDto.email, secret);
 
     // Generate the OTP using otp-generator
     const otpCode = otpGenerator.generate(6, {
@@ -34,8 +34,8 @@ export class OtpService {
 
   verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
     // Verify OTP logic
-    const secret = this.otpSecrets[verifyOtpDto.email];
-    const isValid = verifyOtpDto.otp === secret; // Directly compare OTPs
+    const secret = this.otpSecrets.get(verifyOtpDto.email);
+    const isValid = secret && verifyOtpDto.otp === secret; // Directly compare OTPs
 
     if (isValid) {
       console.log('OTP verification successful for email:', verifyOtpDto.email);
