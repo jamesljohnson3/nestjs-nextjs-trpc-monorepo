@@ -10,7 +10,11 @@ export class OtpService {
 
   constructor(private readonly emailService: EmailService) {}
 
-  generateOtp(email: string): string {
+  generateOtp(
+    generateOtpDto: GenerateOtpDto,
+    email: string,
+    currentUrl: string,
+  ): string {
     const secret = speakeasy.generateSecret();
     this.otpSecrets[email] = secret.base32;
 
@@ -20,11 +24,11 @@ export class OtpService {
     });
 
     // Send OTP email
-    this.emailService.sendOtpEmail(email, otpCode);
+    this.emailService.sendOtpEmail(generateOtpDto.email, otpCode, currentUrl);
 
     return otpCode;
   }
-  verifyOtp(verifyOtpDto: VerifyOtpDto) {
+  verifyOtp(verifyOtpDto: VerifyOtpDto, email: string, currentUrl: string) {
     // Verify OTP logic
     const isValid = speakeasy.totp.verify({
       secret: this.otpSecrets[verifyOtpDto.email],
@@ -34,7 +38,11 @@ export class OtpService {
 
     if (isValid) {
       // Send webhook request for email confirmation
-      this.emailService.sendOtpEmail(verifyOtpDto.email, 'CONFIRMED');
+      this.emailService.sendOtpEmail(
+        verifyOtpDto.email,
+        'CONFIRMED',
+        currentUrl,
+      );
 
       return {
         message: 'OTP verification successful',

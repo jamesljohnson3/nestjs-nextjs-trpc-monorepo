@@ -6,4 +6,5 @@ export class GenerateOtpDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+  field1: string;
 }

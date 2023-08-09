@@ -5,7 +5,11 @@ import { HttpService } from '@nestjs/axios';
 export class EmailService {
   constructor(private httpService: HttpService) {}
 
-  async sendOtpEmail(email: string, otpCode: string): Promise<void> {
+  async sendOtpEmail(
+    email: string,
+    otpCode: string,
+    currentUrl: string,
+  ): Promise<void> {
     // Implement your email sending logic here
     console.log(`Sending OTP email to ${email} with OTP code ${otpCode}`);
 
@@ -15,6 +19,7 @@ export class EmailService {
     const payload = {
       email,
       otpCode,
+      currentUrl, // Include the currentUrl in the payload
     };
 
     try {
