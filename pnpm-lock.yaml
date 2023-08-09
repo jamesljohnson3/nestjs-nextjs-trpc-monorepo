@@ -49,6 +49,7 @@ importers:
 
   apps/server:
     specifiers:
+      '@nestjs/axios': ^3.0.0
       '@nestjs/cli': ^9.0.0
       '@nestjs/common': ^9.0.0
       '@nestjs/config': ^3.0.0
@@ -85,6 +86,7 @@ importers:
       webpack: ^5.0.0
       zod: ^3.21.4
     dependencies:
+      '@nestjs/axios': 3.0.0_y3mopmz7s76tazlkc5n7jhhnyq
       '@nestjs/common': 9.4.3_3yehvwuinvxioxgkmz5xpqglqq
       '@nestjs/config': 3.0.0_dk4u2lifzsfgc7wmi6hz7mkv5a
       '@nestjs/core': 9.4.3_c4fgdp752ib7dsgrlnt7fswfce
@@ -2964,6 +2966,20 @@ packages:
       rxjs: ^6.0.0 || ^7.0.0
     dependencies:
       axios: 1.4.0
+    dev: false
+
+  /@nestjs/axios/3.0.0_y3mopmz7s76tazlkc5n7jhhnyq:
+    resolution: {integrity: sha512-ULdH03jDWkS5dy9X69XbUVbhC+0pVnrRcj7bIK/ytTZ76w7CgvTZDJqsIyisg3kNOiljRW/4NIjSf3j6YGvl+g==}
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
+      axios: ^1.3.1
+      reflect-metadata: ^0.1.12
+      rxjs: ^6.0.0 || ^7.0.0
+    dependencies:
+      '@nestjs/common': 9.4.3_3yehvwuinvxioxgkmz5xpqglqq
+      axios: 1.4.0
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.1
     dev: false
 
   /@nestjs/cli/9.5.0:

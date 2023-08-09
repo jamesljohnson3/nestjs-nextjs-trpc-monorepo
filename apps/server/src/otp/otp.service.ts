@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as speakeasy from 'speakeasy';
-import { GenerateOtpDto } from './dto/generate-otp.dto'; // Keep this import statement
+import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailService } from './email.service';
 
@@ -10,9 +10,9 @@ export class OtpService {
 
   constructor(private readonly emailService: EmailService) {}
 
-  generateOtp(generateOtpDto: GenerateOtpDto): string {
+  generateOtp(email: string): string {
     const secret = speakeasy.generateSecret();
-    this.otpSecrets[generateOtpDto.email] = secret.base32;
+    this.otpSecrets[email] = secret.base32;
 
     const otpCode = speakeasy.totp({
       secret: secret.base32,
@@ -20,21 +20,21 @@ export class OtpService {
     });
 
     // Send OTP email
-    this.emailService.sendOtpEmail(generateOtpDto.email, otpCode);
+    this.emailService.sendOtpEmail(email, otpCode);
 
     return otpCode;
   }
-
   verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    // Verify OTP logic and send webhook requests
+    // Verify OTP logic
     const isValid = speakeasy.totp.verify({
       secret: this.otpSecrets[verifyOtpDto.email],
       encoding: 'base32',
-      token: verifyOtpDto.otp, // Change this to 'otp' instead of 'otpCode'
+      token: verifyOtpDto.otp, // Use 'verifyOtpDto.otp' instead of 'verifyOtpDto.otpCode'
     });
 
     if (isValid) {
-      // Send webhook requests
+      // Send webhook request for email confirmation
+      this.emailService.sendOtpEmail(verifyOtpDto.email, 'CONFIRMED');
 
       return {
         message: 'OTP verification successful',

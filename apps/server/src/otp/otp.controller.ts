@@ -9,7 +9,7 @@ export class OtpController {
 
   @Post('generate')
   generateOtp(@Body() generateOtpDto: GenerateOtpDto) {
-    return this.otpService.generateOtp(generateOtpDto); // Pass the entire DTO object
+    return this.otpService.generateOtp(generateOtpDto.email);
   }
 
   @Post('verify')
