@@ -19,7 +19,8 @@ export class OtpController {
 
   @Post('verify')
   verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
-    return this.otpService.verifyOtp(verifyOtpDto);
+    const currentUrl = '...'; // Set your current URL here
+    return this.otpService.verifyOtp(verifyOtpDto, currentUrl);
   }
 
   @Post('resend-otp')
