@@ -1,11 +1,14 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNumberString, IsNotEmpty, IsString } from 'class-validator';
 
 export class VerifyOtpDto {
   @IsString()
   @IsNotEmpty()
   email: string; // User's email
 
-  @IsString()
   @IsNotEmpty()
-  otp: string; // OTP code
+  currentUrl: string;
+
+  @IsNotEmpty()
+  @IsNumberString()
+  otp: string;
 }

@@ -22,13 +22,8 @@ export class OtpController {
   }
 
   @Post('verify')
-  verifyOtp(@Body() verifyOtpDto: VerifyOtpDto, @Req() request: any) {
-    const currentUrl = request.headers.referer || ''; // Extract current URL from headers
-    return this.otpService.verifyOtp(
-      verifyOtpDto,
-      verifyOtpDto.email,
-      currentUrl,
-    );
+  verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    return this.otpService.verifyOtp(verifyOtpDto, verifyOtpDto.email);
   }
 
   @Post('resend-otp')

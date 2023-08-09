@@ -3,7 +3,6 @@ import * as speakeasy from 'speakeasy';
 import { GenerateOtpDto } from './dto/generate-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { EmailService } from './email.service';
-
 @Injectable()
 export class OtpService {
   private otpSecrets: { [key: string]: string } = {}; // Store secrets by user email
@@ -16,7 +15,7 @@ export class OtpService {
     currentUrl: string,
   ): string {
     const secret = speakeasy.generateSecret();
-    this.otpSecrets[email] = secret.base32;
+    this.otpSecrets[generateOtpDto.email] = secret.base32;
 
     const otpCode = speakeasy.totp({
       secret: secret.base32,
@@ -29,7 +28,7 @@ export class OtpService {
     return otpCode;
   }
 
-  verifyOtp(verifyOtpDto: VerifyOtpDto, email: string, currentUrl: string) {
+  verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
     // Verify OTP logic
     const secret = this.otpSecrets[verifyOtpDto.email];
     const isValid = speakeasy.totp.verify({
