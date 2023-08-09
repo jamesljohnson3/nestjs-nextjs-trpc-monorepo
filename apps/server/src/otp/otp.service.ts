@@ -15,7 +15,7 @@ export class OtpService {
     generateOtpDto: GenerateOtpDto,
     email: string,
     currentUrl: string,
-  ): string {
+  ): void {
     const secret = crypto.randomBytes(16).toString('hex'); // Generate a new random secret
 
     // Store the secret for the user's email
@@ -28,8 +28,6 @@ export class OtpService {
 
     // Send OTP email
     this.emailService.sendOtpEmail(generateOtpDto.email, otpCode, currentUrl);
-
-    return otpCode;
   }
 
   verifyOtp(verifyOtpDto: VerifyOtpDto, currentUrl: string) {
