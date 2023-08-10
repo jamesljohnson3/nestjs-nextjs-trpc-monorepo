@@ -9,7 +9,7 @@ import { BucketModule } from './bucket/bucket.module'; // Import the BucketModul
 import { MulterModule } from '@nestjs/platform-express';
 import { OtpModule } from './otp/otp.module';
 import { UserModule } from './user/user.module'; // Import the UserModule
-import { CheckUserController } from './check-user/user.controller'; // Import the DataController
+import { CheckUserController } from './store/user.controller'; // Import the DataController
 
 @Module({
   imports: [
