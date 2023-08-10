@@ -9,6 +9,7 @@ import { BucketModule } from './bucket/bucket.module'; // Import the BucketModul
 import { MulterModule } from '@nestjs/platform-express';
 import { OtpModule } from './otp/otp.module';
 import { UserModule } from './user/user.module'; // Import the UserModule
+import { CheckUserController } from './check-user/user.controller'; // Import the DataController
 
 @Module({
   imports: [
@@ -23,7 +24,10 @@ import { UserModule } from './user/user.module'; // Import the UserModule
     }),
     UserModule, // Add the UserModule here
   ],
-  controllers: [AppController],
+  controllers: [
+    AppController,
+    CheckUserController, // Include the DataController here
+  ],
   providers: [AppService],
 })
 export class AppModule {}

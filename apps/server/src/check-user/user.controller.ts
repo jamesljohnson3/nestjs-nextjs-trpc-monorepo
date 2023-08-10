@@ -2,7 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import fetch from 'node-fetch';
 
 @Controller('check-user')
-export class DataController {
+export class CheckUserController {
   @Post('check-user')
   async sendDataToWebhook(@Body() data: { email: string }) {
     try {
