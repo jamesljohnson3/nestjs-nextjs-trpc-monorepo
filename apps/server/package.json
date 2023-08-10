@@ -31,6 +31,7 @@
     "axios": "^1.4.0",
     "class-validator": "^0.14.0",
     "crypto": "^1.0.1",
+    "node-fetch": "^3.3.2",
     "otp-generator": "^4.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
