@@ -8,7 +8,7 @@ export class CheckUserController {
 
   constructor(private readonly httpService: HttpService) {}
 
-  @Post('check-existence')
+  @Post('check-user')
   async checkUserExistence(@Body() data: any): Promise<any> {
     try {
       const response = await this.httpService
