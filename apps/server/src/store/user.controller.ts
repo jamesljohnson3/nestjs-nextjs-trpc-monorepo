@@ -15,7 +15,7 @@ export class CheckUserController {
         .post(this.webhookUrl, data)
         .toPromise();
 
-      return response!.data; // Use a non-null assertion
+      return response?.data; // Use a non-null assertion
     } catch (error) {
       throw new Error('Error communicating with webhook endpoint');
     }
