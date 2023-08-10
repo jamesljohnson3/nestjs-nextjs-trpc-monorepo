@@ -1,5 +1,3 @@
-// user.controller.ts
-
 import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 
@@ -9,11 +7,19 @@ export class UserController {
 
   @Post('check-existence')
   async checkUserExistence(
-    @Body() requestBody: { email: string; currentUrl: string }, // Provide both email and currentUrl
+    @Body() requestBody: { email: string; currentUrl: string },
   ) {
-    return this.userService.checkUserExistence(
-      requestBody.email,
-      requestBody.currentUrl, // Pass currentUrl as an argument
-    );
+    try {
+      const rawData = await this.userService.checkUserExistence(
+        requestBody.email,
+        requestBody.currentUrl,
+      );
+
+      // Pass the raw data back to the client (Next.js app)
+      return rawData;
+    } catch (error) {
+      // Handle any errors that occurred during the process
+      return { error: 'An error occurred while checking user existence.' };
+    }
   }
 }
