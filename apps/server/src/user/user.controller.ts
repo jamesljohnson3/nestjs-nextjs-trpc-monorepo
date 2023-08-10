@@ -10,6 +10,8 @@ export class UserController {
     @Body() requestBody: { email: string; currentUrl: string },
   ) {
     try {
+      console.log('Checking user existence for email:', requestBody.email);
+
       const rawData = await this.userService.checkUserExistence(
         requestBody.email,
         requestBody.currentUrl,
