@@ -21,10 +21,14 @@ export class CheckUserController {
         // Add other fields as needed
       };
 
+      console.log('Sending payload to webhook API:', payload);
+
       // Send the POST request to the webhook API
       const response = await this.httpService
         .post(this.webhookUrl, payload)
         .toPromise();
+
+      console.log('Webhook API response:', response?.data);
 
       // Return the data from the webhook API response
       return response?.data;
