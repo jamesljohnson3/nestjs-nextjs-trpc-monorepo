@@ -24,21 +24,27 @@ export class UploadController {
         endpoint: 'https://s3.fr-par.scw.cloud', // Correct Scaleway S3 endpoint
       });
 
+      // Generate a unique filename using timestamp and original file extension
+      const uniqueFilename = `${Date.now()}${extname(file.originalname)}`;
+
       // Upload the file to Scaleway S3 bucket
       const uploadParams = {
         Bucket: 'v1storage.unlimitednow.site', // Replace with your bucket name
-        Key: `${Date.now()}${extname(file.originalname)}`, // Using a timestamp as the filename
+        Key: uniqueFilename,
         Body: file.buffer,
       };
 
+      // Use the PutObjectCommand to upload the file
       const command = new PutObjectCommand(uploadParams);
       const uploadResponse = await s3.send(command);
 
       console.log('File uploaded to Scaleway:', uploadResponse);
 
-      // Handle other logic, response, etc.
-
-      return { message: 'File uploaded successfully' };
+      // Return a success message
+      return {
+        message: 'File uploaded successfully',
+        filename: uniqueFilename,
+      };
     } catch (error) {
       console.error('Error uploading file:', error);
       throw new Error('Error uploading file');
