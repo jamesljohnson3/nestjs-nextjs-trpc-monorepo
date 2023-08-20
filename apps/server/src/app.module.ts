@@ -10,6 +10,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { OtpModule } from './otp/otp.module';
 import { UserModule } from './user/user.module'; // Import the UserModule
 import { CheckUserController } from './store/user.controller'; // Import the DataController
+import { WebsiteController } from './upload/upload.controller'; // Update the path accordingly
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { CheckUserController } from './store/user.controller'; // Import the Dat
   ],
   controllers: [
     AppController,
-    CheckUserController, // Include the DataController here
+    CheckUserController,
+    WebsiteController, // Include the DataController here
   ],
   providers: [AppService],
 })
