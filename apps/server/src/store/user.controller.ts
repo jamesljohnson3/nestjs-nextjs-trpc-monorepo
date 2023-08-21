@@ -27,6 +27,7 @@ export class CheckUserController {
       // Modify the URL as needed for storing events
       const storeEventUrl =
         'https://snap-jj3media-icloud-com.eu-1.celonis.cloud/ems-automation/public/api/root/8242ceb6-98ea-429b-b479-58f947b84822/hook/knjio0qaii63ef0s5qhjxf3w87dg84je';
+      console.log('Event data to be stored:', eventData); // Console log statement
 
       const response = await this.httpService
         .post(storeEventUrl, eventData)
