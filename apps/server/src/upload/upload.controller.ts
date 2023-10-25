@@ -13,7 +13,7 @@ import { HttpService } from '@nestjs/axios';
 @Controller('website')
 export class WebsiteController {
   private readonly webhookUrl =
-    'https://celonis-88gmud.eu-1.celonis.cloud/ems-automation/public/api/root/8c61ab66-8aa9-4ec2-94df-860a9d5a0270/hook/4aozneqeqmecmmu8j04uulx1xyh874u8';
+    'https://celonis-88gmud.eu-1.celonis.cloud/ems-automation/public/api/root/8c61ab66-8aa9-4ec2-94df-860a9d5a0270/hook/lue0r8e0j1u2umuy7n0fbany88wsbs16';
 
   constructor(private readonly httpService: HttpService) {}
 
